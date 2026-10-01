@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Slot Configuration Editor</h2>
+        <div class="d-flex gap-2 align-items-center">
+            <span class="badge bg-secondary fs-6" id="slotCountBadge">0 Slots</span>
+            <div class="input-group">
+                <select class="form-select bg-dark text-light border-secondary" id="loadConfigSelect">
+                    <option value="">-- Load Config --</option>
+                </select>
+                <button class="btn btn-outline-info" id="loadConfigBtn">Load</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Editor Area -->
+        <div class="col-lg-9">
+            <div class="card bg-card border-0 shadow-sm h-100">
+                <div class="card-header border-secondary bg-transparent d-flex justify-content-between align-items-center py-2">
+                    <div class="toolbar d-flex gap-2">
+                        <input type="file" id="imageInput" accept="image/*" class="d-none">
+                        <button class="btn btn-sm btn-primary" onclick="document.getElementById('imageInput').click()">Upload Image</button>
+                        <button class="btn btn-sm btn-success" id="newPolygonBtn" disabled>New Slot</button>
+                        <button class="btn btn-sm btn-warning" id="undoBtn" disabled>Undo Point</button>
+                        <button class="btn btn-sm btn-danger" id="deleteBtn" disabled>Delete Selected</button>
+                        <button class="btn btn-sm btn-outline-danger" id="clearAllBtn" disabled>Clear All</button>
+                    </div>
+                    <div class="status-text text-accent fw-bold" id="statusText">Upload an image to start</div>
+                </div>
+                <div class="card-body p-0 d-flex justify-content-center align-items-center bg-dark" style="min-height: 600px; overflow: auto; position: relative;" id="canvasContainer">
+                    <span id="canvasPrompt" class="text-muted">No image loaded</span>
+                    <canvas id="editorCanvas" style="display: none; cursor: crosshair;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <div class="card bg-card border-0 shadow-sm mb-4">
+                <div class="card-header border-secondary bg-transparent">
+                    <h5 class="mb-0">Instructions</h5>
+                </div>
+                <div class="card-body text-sm text-muted">
+                    <ol class="ps-3 mb-0">
+                        <li class="mb-1">Upload a parking lot image.</li>
+                        <li class="mb-1">Click <strong>New Slot</strong> to begin drawing.</li>
+                        <li class="mb-1">Click on the image to add corners (usually 4 points for a space).</li>
+                        <li class="mb-1">Click near the start point or press <strong>Enter</strong> to close the polygon.</li>
+                        <li class="mb-1">Enter a label (e.g., P1, Slot-A) when prompted.</li>
+                        <li class="mb-1">Click existing slots to select/delete them.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card bg-card border-0 shadow-sm mb-4" style="flex-grow: 1;">
+                <div class="card-header border-secondary bg-transparent">
+                    <h5 class="mb-0">Configured Slots</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush" id="slotList" style="max-height: 300px; overflow-y: auto;">
+                        <li class="list-group-item bg-transparent text-muted text-center py-3">No slots configured</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card bg-card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="configName" class="form-label">Configuration Name</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="configName" placeholder="e.g., lot_a_cam_1">
+                    </div>
+                    <button class="btn btn-primary w-100" id="saveConfigBtn" disabled>Save Configuration</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Label Prompt Modal -->
+<div class="modal fade" id="labelModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content bg-card text-light border-secondary">
+            <div class="modal-header border-secondary py-2">
+                <h6 class="modal-title">Name Parking Slot</h6>
+            </div>
+            <div class="modal-body py-3">
+                <input type="text" class="form-control bg-dark text-light border-secondary" id="slotLabelInput" placeholder="e.g., A1">
+            </div>
+            <div class="modal-footer border-secondary py-1">
+                <button type="button" class="btn btn-sm btn-secondary" id="cancelLabelBtn">Cancel</button>
+                <button type="button" class="btn btn-sm btn-primary" id="saveLabelBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/slot_config.js"></script>
+{% endblock %}

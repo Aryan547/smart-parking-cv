@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="hero-section text-center py-5 mb-5 rounded-4 shadow-sm bg-card">
+        <h1 class="display-4 fw-bold text-accent mb-3">Smart Parking Space Detection & Occupancy Analysis</h1>
+        <h3 class="text-light mb-4">Using Computer Vision & Deep Learning</h3>
+        <p class="lead text-muted mx-auto" style="max-width: 800px;">
+            ParkVision AI is an advanced automated parking management system. 
+            It utilizes state-of-the-art YOLO-based object detection and spatial matching 
+            algorithms to monitor parking spaces in real-time, providing accurate occupancy status 
+            and comprehensive analytics.
+        </p>
+        <div class="mt-5 d-flex justify-content-center gap-3">
+            <a href="/image-analysis" class="btn btn-primary btn-lg">📷 Analyze Image</a>
+            <a href="/video-analysis" class="btn btn-outline-info btn-lg">🎥 Analyze Video</a>
+            <a href="/slot-config" class="btn btn-outline-success btn-lg">✏️ Configure Slots</a>
+        </div>
+    </div>
+
+    <div class="pipeline-section mb-5">
+        <h2 class="text-center mb-4 border-bottom pb-2 border-secondary">Computer Vision Pipeline</h2>
+        <div class="pipeline-flow d-flex justify-content-between align-items-center flex-wrap gap-2 text-center">
+            <div class="pipeline-node">Input Image</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node">Validation</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node">Preprocessing</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node">Slot Config</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node highlight">YOLO Detection</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node highlight">Spatial Match</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node">Occupancy</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node">Statistics</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node">Output</div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 bg-card border-0 shadow feature-card">
+                <div class="card-body text-center">
+                    <div class="fs-1 mb-3">🔍</div>
+                    <h4 class="card-title text-accent">Image Processing</h4>
+                    <p class="card-text text-muted">Advanced image filtering and preprocessing techniques to enhance visibility and improve detection accuracy under various lighting conditions.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 bg-card border-0 shadow feature-card">
+                <div class="card-body text-center">
+                    <div class="fs-1 mb-3">🚙</div>
+                    <h4 class="card-title text-accent">Vehicle Detection</h4>
+                    <p class="card-text text-muted">Powered by YOLO (You Only Look Once) object detection models to accurately identify multiple vehicle classes in real-time.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 bg-card border-0 shadow feature-card">
+                <div class="card-body text-center">
+                    <div class="fs-1 mb-3">📊</div>
+                    <h4 class="card-title text-accent">Analytics Dashboard</h4>
+                    <p class="card-text text-muted">Comprehensive statistical breakdown of parking lot utilization, historical trends, and real-time availability tracking.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-stack text-center py-4 rounded-3 bg-dark-alt mb-4">
+        <h5 class="text-muted mb-3">Built With</h5>
+        <div class="d-flex justify-content-center flex-wrap gap-4 fs-5 text-light">
+            <span>🐍 Python</span>
+            <span>🌶️ Flask</span>
+            <span>👁️ OpenCV</span>
+            <span>🎯 YOLO</span>
+            <span>🧮 NumPy</span>
+            <span>📈 Chart.js</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

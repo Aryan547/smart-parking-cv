@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Video Analysis</h2>
+    
+    <div class="row g-4">
+        <!-- Control Panel -->
+        <div class="col-lg-4">
+            <div class="card bg-card border-0 shadow-sm mb-4">
+                <div class="card-header border-secondary bg-transparent">
+                    <h5 class="mb-0">Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form id="uploadForm">
+                        <div class="mb-4">
+                            <label class="form-label">Upload Video</label>
+                            <div class="drop-zone" id="dropZone">
+                                <span class="drop-zone-prompt">Drop video here or click to upload</span>
+                                <input type="file" name="file" id="fileInput" class="drop-zone-input" accept="video/*" required>
+                                <div class="drop-zone-file-name" style="display:none; text-align:center; padding:20px; color:#00b4d8; font-weight:bold;"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="configSelect" class="form-label">Slot Configuration</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="configSelect" name="config_name">
+                                <option value="">None (Detect all vehicles)</option>
+                                <!-- Populated via JS -->
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="frameInterval" class="form-label">Process Every Nth Frame</label>
+                            <input type="number" class="form-control bg-dark text-light border-secondary" id="frameInterval" name="frame_interval" min="1" max="60" value="5">
+                            <small class="text-muted">Higher values process faster but update less frequently</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confThreshold" class="form-label d-flex justify-content-between">
+                                <span>Confidence Threshold</span>
+                                <span id="confValue" class="text-accent">0.25</span>
+                            </label>
+                            <input type="range" class="form-range custom-range" id="confThreshold" name="conf_threshold" min="0.1" max="1.0" step="0.05" value="0.25">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="occThreshold" class="form-label d-flex justify-content-between">
+                                <span>Occupancy Threshold (IoU)</span>
+                                <span id="occValue" class="text-accent">0.3</span>
+                            </label>
+                            <input type="range" class="form-range custom-range" id="occThreshold" name="occ_threshold" min="0.1" max="1.0" step="0.05" value="0.3">
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="analyzeBtn" disabled>
+                                Process Video
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="col-lg-8">
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="text-center py-5 d-none bg-card rounded shadow-sm h-100 d-flex flex-column justify-content-center align-items-center">
+                <div class="spinner-border text-primary mx-auto mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Processing...</span>
+                </div>
+                <h4 class="text-muted">Processing Video...</h4>
+                <p id="progressText" class="text-muted mb-3">This may take a while depending on video length.</p>
+                <div class="progress w-75 bg-dark" style="height: 20px;">
+                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="text-center py-5 bg-card rounded shadow-sm h-100 d-flex flex-column justify-content-center align-items-center">
+                <div class="fs-1 mb-3 text-muted">🎬</div>
+                <h4 class="text-muted">No Video Analyzed</h4>
+                <p class="text-muted">Upload a video and click process to generate occupancy analytics.</p>
+            </div>
+
+            <!-- Results Content -->
+            <div id="resultsContainer" class="d-none">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4 bg-card p-3 rounded shadow-sm">
+                    <h5 class="mb-0 text-accent">Analysis Complete</h5>
+                    <a id="downloadVideoBtn" href="#" class="btn btn-success">
+                        ⬇️ Download Annotated Video
+                    </a>
+                </div>
+
+                <!-- Final Stats Row -->
+                <h5 class="mb-3 border-bottom pb-2 border-secondary">Final Frame Statistics</h5>
+                <div class="row g-3 mb-4" id="statsCards">
+                    <!-- Inserted via JS -->
+                </div>
+
+                <!-- Chart Row -->
+                <div class="card bg-card border-0 shadow-sm mb-4">
+                    <div class="card-header border-secondary bg-transparent">
+                        <h6 class="mb-0">Occupancy Over Time</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="occupancyChart" height="100"></canvas>
+                    </div>
+                </div>
+
+                <!-- Frame Data Table -->
+                <div class="card bg-card border-0 shadow-sm">
+                    <div class="card-header border-secondary bg-transparent d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Frame-by-Frame Data</h6>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#frameTableCollapse">
+                            Show/Hide
+                        </button>
+                    </div>
+                    <div class="collapse" id="frameTableCollapse">
+                        <div class="card-body p-0 table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-dark table-hover mb-0 custom-table text-center">
+                                <thead class="sticky-top bg-card">
+                                    <tr>
+                                        <th>Frame</th>
+                                        <th>Total Slots</th>
+                                        <th>Occupied</th>
+                                        <th>Available</th>
+                                        <th>Occupancy %</th>
+                                        <th>Total Vehicles</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="frameTableBody">
+                                    <!-- Inserted via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/video_analysis.js"></script>
+{% endblock %}

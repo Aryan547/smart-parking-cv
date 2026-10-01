@@ -1,0 +1,21 @@
+{
+  "name": "vehicles_slots",
+  "image_reference": "sample_vehicles.jpg",
+  "slots": [
+    {
+      "id": 1,
+      "label": "Bay 1 (Front)",
+      "points": [[20, 20], [800, 20], [800, 210], [20, 210]]
+    },
+    {
+      "id": 2,
+      "label": "Bay 2 (Center - Bus)",
+      "points": [[20, 220], [800, 220], [800, 770], [20, 770]]
+    },
+    {
+      "id": 3,
+      "label": "Bay 3 (Rear)",
+      "points": [[20, 780], [800, 780], [800, 1050], [20, 1050]]
+    }
+  ]
+}
